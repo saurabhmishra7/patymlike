@@ -14,10 +14,11 @@ export const userSignUpController = async (req, res) => {
 
 export const userSignInController = async (req, res) => {
   try {
-    const token = await userSignIn(req.body);
-    res.json({
-      token
-    })
+    const result = await userSignIn(req.body);
+    res.send({
+      message: "Sucessfully log in",
+      userDetails: result
+    });
   } catch (error) {
     res.status(400).json({
       message: "Unauthorizes",
@@ -45,7 +46,7 @@ export const getBulkUserController = async (req, res) => {
   try {
     const users = await  getBulkUser(req?.query?.filter);
     res.json({
-      user: users.map(user => ({
+      users: users.map(user => ({
           username: user.username,
           firstName: user.firstName,
           lastName: user.lastName,
@@ -53,7 +54,7 @@ export const getBulkUserController = async (req, res) => {
       }))
   })
   } catch (error) {
-    res.status().json({
+    res.status(500).json({
       message: "Issue in getBulkUser",
       error: error
     });

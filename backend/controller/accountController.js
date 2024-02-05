@@ -19,6 +19,9 @@ export const transferAmountController = async (req, res) => {
       amount: req?.body?.amount
     };
     await transferAmount(beneficiary);
+    res.json({
+      message: "Transaction done sucessfully"
+    })
   } catch (error) {
     throw new Error("Transaction Failed");
   }

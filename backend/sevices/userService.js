@@ -28,6 +28,7 @@ export const userSignup = async function userSignUp(userSignUpDetails) {
      const userId = res._id;
      const token = jwt.sign({
          userName: username,
+         userId
        },
        configEnv.jwtSecretKey
      );
@@ -52,14 +53,14 @@ export const userSignup = async function userSignUp(userSignUpDetails) {
 
 export const userSignIn = async function userSignIn(userSignDetails) {
     try { 
-      const userName = req.body.userName;
-      const password = req.body.password;
+      const username = userSignDetails.username;
+      const password = userSignDetails.password;
   
-      if (!(userName && password)) {
+      if (!(username && password)) {
         throw new Error(message.inputRequired);
       }
   
-      const user = await verifyUser(userName);
+      const user = await verifyUser(username);
       const verifyPassword = await bcrypt.compare(password, user.password);
   
       if (!(user && verifyPassword)) {
@@ -68,13 +69,17 @@ export const userSignIn = async function userSignIn(userSignDetails) {
   
       const token = jwt.sign(
         {
-          userName: userName,
+          userName: username,
           userId: user?._id
         },
-        config.SECRET
+        configEnv.jwtSecretKey
       );
       
-      return token;
+      return {
+        token: token,
+        username: user?.username,
+        userId: user?._id
+       };
     } catch (error) {
       throw new Error("Authentication failed")
     }
@@ -92,12 +97,15 @@ export const userUpdateInfo = async function userSignUp(userDetails) {
     }
 }
 
-export const verifyUser = async function verifyUser(userName) {
-  return UserModel.findOne({
-    where: {
-      userName: userName,
-    },
-  });
+export const verifyUser = async function verifyUser(username) {
+  try {
+    const res = await UserModel.findOne({ 
+        username: username,
+      });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export const encryption = async function encryption(password) {
@@ -105,15 +113,15 @@ export const encryption = async function encryption(password) {
 }
 
 export const getBulkUser = async function getBulkUser(userName) {
-  const name = userName;
+  
   const res = await UserModel.find({
     $or: [{
       firstName: {
-        "$regex": userName
+        "$regex": userName || ""
       }
     }, {
       lastName: {
-        "$regex": userName
+        "$regex": userName || ""
       }
     }]
   });

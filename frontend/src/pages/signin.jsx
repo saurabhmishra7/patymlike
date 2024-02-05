@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Heading from '../components/heading';
 import SubHeading from '../components/subheading';
 import InputBox from '../components/inputBox';
 import Button from '../components/button';
 import BottomWarming from '../components/bottomWarming';
 import axios from "axios"
+import { useNavigate } from 'react-router-dom';
 
 const Signin = () => {
-  const [ userName, setUserName ] = useState("");
-  const [ password, setPassword ] = useState("")
-  async function onClick() {
-      const userDetail = await axio
+  const [ username, setUsername ] = useState("");
+  const [ password, setPassword ] = useState("");
+  const navigate = useNavigate();
+
+  async function login() {
+    try {
+      const response = await axios.post('http://localhost:3000/api/v1/user/signin', {
+        username,
+        password
+      });
+
+      localStorage.setItem("token", response.data.userDetails.token);
+      navigate(`/dashboard?id=${response.data.userDetails.userId}`);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -20,13 +33,13 @@ const Signin = () => {
         <Heading label={"Sign in"} />
         <SubHeading label={"Enter your credentials to access your account"} />
         <InputBox onChange={e => {
-           setUserName(e.target.value);
+           setUsername(e.target.value);
           }}  placeholder="saurabh@gmail.com" label={"Email"} />
         <InputBox onChange={e => {
            setPassword(e.target.value);
           }} placeholder="123456" label={"Password"} />
         <div className="pt-4">
-          <Button label={"Sign in"} onClick={login()}/>
+          <Button label={"Sign in"} onClick={login}/>
         </div>
         <BottomWarming label={"Don't have an account?"} buttonText={"Sign up"} to={"/signup"} />
       </div>

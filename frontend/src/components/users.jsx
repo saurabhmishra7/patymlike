@@ -1,19 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from './button';
+import { useNavigate } from 'react-router-dom';
 
-export default function Users() {// Replace with backend call
-  const [users, setUsers] = useState([{
-      firstName: "Saurabh",
-      lastName: "Mishra",
-      _id: 1
-  }]);
-
+export default function Users({users, onChange}) {// Replace with backend call
+  
+    useEffect(() => {
+        onChange()
+    }, []);
   return <>
       <div className="font-bold mt-6 text-lg">
           Users
       </div>
       <div className="my-2">
-          <input type="text" placeholder="Search users..." className="w-full px-2 py-1 border rounded border-slate-200"></input>
+          <input type="text" placeholder="Search users..." className="w-full px-2 py-1 border rounded border-slate-200" onChange={onChange}></input>
       </div>
       <div>
           {users.map((user, index) => <User user={user} key={index}/>)}
@@ -23,6 +22,10 @@ export default function Users() {// Replace with backend call
 
 
 function User({user}) {
+    const token = localStorage.getItem('token');
+    const headers = { Authorization: `Bearer ${token}` };
+    const navigate = useNavigate();
+    
   return <div className="flex justify-between">
       <div className="flex">
           <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center mt-1 mr-2">
@@ -38,7 +41,7 @@ function User({user}) {
       </div>
 
       <div className="flex flex-col justify-center h-ful">
-          <Button label={"Send Money"} />
+          <Button label={"Send Money"} onClick={() => navigate(`/send?id=${user._id}&&name=${user.firstName}`)}/>
       </div>
   </div>
 }

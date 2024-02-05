@@ -1,4 +1,6 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 const SendMoney = () => {
     const [searchParams] = useSearchParams();
@@ -17,7 +19,7 @@ const SendMoney = () => {
                 <div class="p-6">
                 <div class="flex items-center space-x-4">
                     <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-                    <span class="text-2xl text-white">{name[0].toUpperCase()}</span>
+                    <span class="text-2xl text-white">{name[0]?.toUpperCase()}</span>
                     </div>
                     <h3 class="text-2xl font-semibold">{name}</h3>
                 </div>

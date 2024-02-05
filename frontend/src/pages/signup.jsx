@@ -4,7 +4,7 @@ import SubHeading from '../components/subheading';
 import InputBox from '../components/inputBox';
 import Button from '../components/button';
 import BottomWarming from '../components/bottomWarming';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from "axios";
 
 const Signup = () => {
@@ -12,6 +12,7 @@ const Signup = () => {
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   return <div className="bg-slate-300 h-screen flex justify-center">
@@ -39,8 +40,9 @@ const Signup = () => {
             lastName,
             password
           });
-          localStorage.setItem("token", response.data.token)
-          navigate("/dashboard")
+          localStorage.setItem("token", response.data.userDetails.token)
+          navigate(`/dashboard?id=${response.data.userDetails.userId}`);
+          setSearchParams({ id: userDetails?.userId })
         }} label={"Sign up"} />
       </div>
       <BottomWarming label={"Already have an account?"} buttonText={"Sign in"} to={"/signin"} />

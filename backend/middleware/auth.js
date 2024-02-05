@@ -1,6 +1,5 @@
 import { configEnv } from "../config/config-dev.js";
-import pkg from 'jsonwebtoken';
-const { jwt } = pkg;
+import jwt from 'jsonwebtoken';
 
 export const verifyToken = async function verifyToken(req, res, next) {
     
